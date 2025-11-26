@@ -18,13 +18,12 @@
             <form method="get" action="/" class="filtros-form">
 
                 <!-- █████████████████████████████████████████████████ -->
-                <!--      Filtro Família – mesmo estilo do Produto     -->
+                <!--      Filtro Família – ATUALIZADO                 -->
                 <!-- █████████████████████████████████████████████████ -->
                 <div class="filtro-item">
                     <label for="marca">Família:</label>
 
-                    <!-- select permite múltiplas (o script abaixo envia os selecionados em marca_hidden) -->
-                    <select name="marca" id="marca" multiple size="1" onchange="submitFamilias()">
+                    <select name="marca" id="marca" multiple size="1" onchange="controleFamilias()">
                         <option value="Todas"
                             {% if not filtro_marca or 'Todas' in filtro_marca %}selected{% endif %}>
                             Todas
@@ -38,21 +37,35 @@
                         {% endfor %}
                     </select>
 
-                    <!-- campo oculto enviado no GET com a lista separada por vírgula -->
                     <input type="hidden" id="marca_hidden" name="marca_hidden"
                            value="{{ ','.join(filtro_marca) if filtro_marca else '' }}">
                 </div>
 
                 <script>
-                function submitFamilias() {
+                function controleFamilias() {
                     const select = document.getElementById("marca");
                     const hidden = document.getElementById("marca_hidden");
 
-                    const selecionadas = [...select.options]
-                        .filter(opt => opt.selected)
-                        .map(opt => opt.value);
+                    let selecionadas = [...select.options]
+                        .filter(o => o.selected)
+                        .map(o => o.value);
 
+                    // Se selecionar qualquer categoria → remove "Todas"
+                    if (selecionadas.includes("Todas") && selecionadas.length > 1) {
+                        select.options[0].selected = false; // remove "Todas"
+                        selecionadas = selecionadas.filter(v => v !== "Todas");
+                    }
+
+                    // Se nada ficou selecionado → marca "Todas"
+                    if (selecionadas.length === 0) {
+                        select.options[0].selected = true;
+                        selecionadas = ["Todas"];
+                    }
+
+                    // Atualiza o campo hidden
                     hidden.value = selecionadas.join(",");
+
+                    // Envia o formulário
                     select.form.submit();
                 }
                 </script>
@@ -89,6 +102,7 @@
                     <label for="pesquisa">Pesquisar Produto:</label>
                     <input type="text" id="pesquisa" name="pesquisa" value="{{ pesquisa }}" placeholder="Digite o nome do produto">
                 </div>
+
             </form>
         </div>
     </div>
