@@ -17,9 +17,7 @@
         <div class="filtros">
             <form method="get" action="/" class="filtros-form">
 
-                <!-- █████████████████████████████████████████████████ -->
-                <!--      Filtro Família – ATUALIZADO                 -->
-                <!-- █████████████████████████████████████████████████ -->
+                <!-- █████████████ FILTRO FAMÍLIA █████████████ -->
                 <div class="filtro-item">
                     <label for="marca">Família:</label>
 
@@ -50,26 +48,20 @@
                         .filter(o => o.selected)
                         .map(o => o.value);
 
-                    // Se selecionar qualquer categoria → remove "Todas"
                     if (selecionadas.includes("Todas") && selecionadas.length > 1) {
-                        select.options[0].selected = false; // remove "Todas"
+                        select.options[0].selected = false;
                         selecionadas = selecionadas.filter(v => v !== "Todas");
                     }
 
-                    // Se nada ficou selecionado → marca "Todas"
                     if (selecionadas.length === 0) {
                         select.options[0].selected = true;
                         selecionadas = ["Todas"];
                     }
 
-                    // Atualiza o campo hidden
                     hidden.value = selecionadas.join(",");
-
-                    // Envia o formulário
                     select.form.submit();
                 }
                 </script>
-                <!-- █████████████████████████████████████████████████ -->
 
                 <!-- Filtro Produto -->
                 <div class="filtro-item">
@@ -86,7 +78,7 @@
                     </select>
                 </div>
 
-                <!-- ⭐⭐⭐ NOVO FILTRO — IMAGEM ⭐⭐⭐ -->
+                <!-- Filtro Imagem -->
                 <div class="filtro-item">
                     <label for="imagem">Imagem:</label>
                     <select name="imagem" id="imagem" onchange="this.form.submit()">
@@ -95,7 +87,6 @@
                         <option value="sem" {% if filtro_imagem == 'sem' %}selected{% endif %}>SEM IMAGEM</option>
                     </select>
                 </div>
-                <!-- ⭐⭐⭐ FIM DO NOVO FILTRO ⭐⭐⭐ -->
 
                 <!-- Pesquisa -->
                 <div class="filtro-item">
@@ -131,11 +122,14 @@
                     {{ medidas | join(' | ') }}
                 </p>
 
+                <!-- ✓ CORRIGIDO — NÃO MOSTRAR "POR" QUANDO FOR NONE -->
                 <div class="precos">
                     {% if produto.DE %}
                         <span class="de">De: R$ {{ produto.DE }}</span>
                     {% endif %}
-                    <span class="por">Por: R$ {{ produto.POR }}</span>
+                    {% if produto.POR %}
+                        <span class="por">Por: R$ {{ produto.POR }}</span>
+                    {% endif %}
                 </div>
 
                 <p class="estoque"><strong>Estoque:</strong> {{ produto.ESTOQUE }}</p>
@@ -172,5 +166,6 @@ document.getElementById('pesquisa').addEventListener('input', function() {
 
 </body>
 </html>
+
 
 
